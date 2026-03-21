@@ -8,9 +8,9 @@ def orchestrate(session: dict) -> dict:
     Session structure:
     {
         "session_id": "abc123",
-        "messages": [...],         # full conversation history
-        "profile": None or {...},  # user profile once complete
-        "recommendations": None,   # ET product recommendations
+        "messages": [...],         
+        "profile": None or {...}, 
+        "recommendations": None,  
         "stage": "profiling" | "recommending" | "done"
     }
     """
@@ -18,7 +18,6 @@ def orchestrate(session: dict) -> dict:
     stage = session.get("stage", "profiling")
     messages = session.get("messages", [])
 
-    # Stage 1: Profiling
     if stage == "profiling":
         result = run_profiling_agent(messages)
 
@@ -29,7 +28,6 @@ def orchestrate(session: dict) -> dict:
             "recommendations": None,
         }
 
-        # Profile complete — move to routing
         if result["profile_complete"] and result["profile"]:
             recommendations = run_routing_agent(result["profile"])
             response["stage"] = "done"

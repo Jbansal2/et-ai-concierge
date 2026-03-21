@@ -14,7 +14,6 @@ def calculate_et_score(profile: dict, recommendations: list, health_score: int) 
     score = 0
     breakdown: dict[str, int] = {}
 
-    # 1. Profile completeness (0-25)
     profile = profile or {}
     recommendations = recommendations or []
 
@@ -24,13 +23,11 @@ def calculate_et_score(profile: dict, recommendations: list, health_score: int) 
     breakdown["profile_completeness"] = profile_score
     score += profile_score
 
-    # 2. Financial health (0-25)
     health_score = _clamp_int(health_score, 0, 100, 0)
     fin_score = int((health_score / 100) * 25)
     breakdown["financial_health"] = fin_score
     score += fin_score
 
-    # 3. Content diversity (0-25)
     interests = profile.get("interests", [])
     if isinstance(interests, str):
         interests = [i.strip() for i in interests.split(",") if i.strip()]
@@ -40,13 +37,11 @@ def calculate_et_score(profile: dict, recommendations: list, health_score: int) 
     breakdown["content_diversity"] = div_score
     score += div_score
 
-    # 4. ET engagement potential (0-25)
     recs = len(recommendations) if isinstance(recommendations, list) else 0
     eng_score = min(recs * 8, 25)
     breakdown["et_engagement"] = eng_score
     score += eng_score
 
-    # Level
     score = _clamp_int(score, 0, 100, 0)
 
     if score >= 85:

@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+backend/venv/
+
+# Local environment / secrets
+.env
+backend/.env
+
+# Local runtime/state
+backend/user_memory.json
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Frontend build artifacts (if/when tracked)
+frontend/node_modules/
+frontend/dist/

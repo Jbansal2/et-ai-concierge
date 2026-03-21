@@ -2,6 +2,8 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from groq import Groq
 from config import GROQ_API_KEY, GROQ_MODEL
+from config import GROQ_API_KEY, get_model
+
 import json
 
 client = Groq(api_key=GROQ_API_KEY)
@@ -30,7 +32,7 @@ Analyze and return a JSON with exactly this structure:
       "category": "Emergency Fund",
       "status": "missing",
       "severity": "high",
-      "icon": "🚨",
+      "icon": "",
       "message": "You have no emergency fund. Keep 6 months expenses liquid.",
       "et_product": "ET Wealth"
     }}
@@ -38,7 +40,7 @@ Analyze and return a JSON with exactly this structure:
   "strong_areas": [
     {{
       "category": "Long Term Planning",
-      "icon": "✅",
+      "icon": "",
       "message": "Good focus on retirement planning."
     }}
   ],
@@ -55,7 +57,7 @@ Rules:
 - Return ONLY the JSON, nothing else.
 """
     response = client.chat.completions.create(
-        model=GROQ_MODEL,
+        model=get_model("gap_analysis"),
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,
         max_tokens=700,
@@ -79,15 +81,15 @@ Rules:
     except Exception:
         return {
             "gaps": [
-                {"category": "Emergency Fund", "severity": "high", "icon": "🚨",
+                {"category": "Emergency Fund", "severity": "high", "icon": "",
                  "message": "Keep 6 months expenses as liquid savings.",
                  "et_product": "ET Wealth", "et_url": ET_URLS["ET Wealth"]},
-                {"category": "Tax Planning", "severity": "medium", "icon": "📊",
+                {"category": "Tax Planning", "severity": "medium", "icon": "",
                  "message": "ELSS investments can save up to ₹46,800 in taxes.",
                  "et_product": "ET Tax", "et_url": ET_URLS["ET Tax"]},
             ],
             "strong_areas": [
-                {"category": "Investment Mindset", "icon": "✅", "message": "You are actively investing"}
+                {"category": "Investment Mindset", "icon": "", "message": "You are actively investing"}
             ],
             "overall_gap_score": 50
         }

@@ -2,6 +2,8 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from groq import Groq
 from config import GROQ_API_KEY, GROQ_MODEL
+from config import GROQ_API_KEY, get_model
+from agents.retry_utils import with_retry
 
 client = Groq(api_key=GROQ_API_KEY)
 
@@ -40,7 +42,7 @@ Start by greeting the user and asking what they do.
 
 def run_profiling_agent(messages: list) -> dict:
     response = client.chat.completions.create(
-        model=GROQ_MODEL,
+    model=get_model("profiling"),
         messages=[{"role": "system", "content": SYSTEM_PROMPT}] + messages,
         temperature=0.4,
         max_tokens=600,
@@ -70,3 +72,42 @@ def run_profiling_agent(messages: list) -> dict:
         "profile": None,
         "profile_complete": False,
     }
+
+def run_profiling_agent(messages: list) -> dict:
+    def _call():
+        response = client.chat.completions.create(
+            model=get_model("profiling"),
+            messages=[{"role": "system", "content": SYSTEM_PROMPT}] + messages,
+            temperature=0.4,
+            max_tokens=600,
+        )
+        return response.choices[0].message.content
+
+    # Fallback response agar sab retry fail ho jayein
+    def _fallback():
+        return "I'm having trouble connecting. Could you please repeat that?"
+
+    reply = with_retry(_call, retries=3, delay=0.5, fallback=_fallback)
+
+    if "PROFILE_READY:" in reply:
+        parts = reply.split("PROFILE_READY:")
+        text_reply = parts[0].strip()
+        import json
+        try:
+            json_str = parts[1].strip()
+            if "}" in json_str:
+                json_str = json_str[:json_str.rfind("}")+1]
+            profile_json = json.loads(json_str)
+        except Exception:
+            profile_json = None
+        return {
+            "reply": text_reply or "Profile ready! Setting up your ET experience.",
+            "profile": profile_json,
+            "profile_complete": True,
+        }
+
+    return {
+        "reply": reply,
+        "profile": None,
+        "profile_complete": False,
+    }    

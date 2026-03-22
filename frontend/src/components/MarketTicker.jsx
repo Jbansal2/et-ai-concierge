@@ -1,22 +1,33 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
 import { LineChart, Line, ResponsiveContainer, Tooltip, YAxis } from "recharts"
+import { getMarketTicker } from "../api/etSaathiApi"
+
+function Sparkline({ points, up, height = 40 }) {
+  if (!points || points.length < 2) return <div style={{ width: 80, height }} />
+  return (
+    <ResponsiveContainer width={80} height={height}>
+      <LineChart data={points}>
+        <YAxis domain={["auto", "auto"]} hide />
+        <Tooltip
+          contentStyle={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: "8px", fontSize: "11px", padding: "4px 8px" }}
+          formatter={v => [v.toLocaleString("en-IN"), ""]}
+          labelFormatter={() => ""}
+        />
+        <Line type="monotone" dataKey="v" dot={false}
+          stroke={up ? "#16a34a" : "#dc2626"} strokeWidth={1.5} />
+      </LineChart>
+    </ResponsiveContainer>
+  )
+}
 
 export default function MarketTicker() {
   const [data, setData] = useState(null)
   const [activeTab, setActiveTab] = useState("indices")
   const [history, setHistory] = useState({})
 
-  useEffect(() => {
-    fetchData()
-    const interval = setInterval(fetchData, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
   const fetchData = () => {
-    axios.get("http://127.0.0.1:8000/api/chat/market-ticker")
-      .then(res => {
-        const d = res.data
+    getMarketTicker()
+      .then(d => {
         setData(d)
         setHistory(prev => {
           const updated = { ...prev }
@@ -36,24 +47,11 @@ export default function MarketTicker() {
       .catch(() => {})
   }
 
-  const Sparkline = ({ symbol, up, height = 40 }) => {
-    const points = history[symbol] || []
-    if (points.length < 2) return <div style={{ width: 80, height }} />
-    return (
-      <ResponsiveContainer width={80} height={height}>
-        <LineChart data={points}>
-          <YAxis domain={["auto", "auto"]} hide />
-          <Tooltip
-            contentStyle={{ background: "#fff", border: "1px solid #f0f0f0", borderRadius: "8px", fontSize: "11px", padding: "4px 8px" }}
-            formatter={v => [v.toLocaleString("en-IN"), ""]}
-            labelFormatter={() => ""}
-          />
-          <Line type="monotone" dataKey="v" dot={false}
-            stroke={up ? "#16a34a" : "#dc2626"} strokeWidth={1.5} />
-        </LineChart>
-      </ResponsiveContainer>
-    )
-  }
+  useEffect(() => {
+    fetchData()
+    const interval = setInterval(fetchData, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   if (!data) return (
     <div className="h-20 bg-white border-b border-gray-100 flex items-center justify-center text-sm text-gray-300"
@@ -98,7 +96,7 @@ export default function MarketTicker() {
               {data.sensex?.up ? "↑" : "↓"} {data.sensex?.change} ({data.sensex?.pct})
             </div>
           </div>
-          <Sparkline symbol="SENSEX" up={data.sensex?.up} height={48} />
+          <Sparkline points={history.SENSEX || []} up={data.sensex?.up} height={48} />
         </div>
 
         {/* NIFTY */}
@@ -110,7 +108,7 @@ export default function MarketTicker() {
               {data.nifty?.up ? "↑" : "↓"} {data.nifty?.change} ({data.nifty?.pct})
             </div>
           </div>
-          <Sparkline symbol="NIFTY" up={data.nifty?.up} height={48} />
+          <Sparkline points={history.NIFTY || []} up={data.nifty?.up} height={48} />
         </div>
 
         {/* Indices / Crypto tabs */}
@@ -177,7 +175,7 @@ export default function MarketTicker() {
               <span className={`text-[11px] font-medium ${s.up ? "text-green-600" : "text-red-500"}`}>
                 {s.up ? "▲" : "▼"} {s.change}
               </span>
-              <Sparkline symbol={s.symbol} up={s.up} height={24} />
+              <Sparkline points={history[s.symbol] || []} up={s.up} height={24} />
             </div>
           ))}
         </div>

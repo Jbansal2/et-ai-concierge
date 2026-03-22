@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import axios from "axios"
 import AskFinance from "../components/AskFinance"
 import HealthScore from "../components/HealthScore"
 import MarketTicker from "../components/MarketTicker"
 import ETScore from "../components/ETScore"
 import PortfolioGaps from "../components/PortfolioGaps"
 import AdBanner from "../components/AdBanner"
+import { getAIInsight, getCrossSell, getNews } from "../api/etSaathiApi"
 
 
 export default function Dashboard() {
@@ -24,16 +24,16 @@ export default function Dashboard() {
     useEffect(() => {
         if (!profile) { navigate("/"); return }
 
-        axios.get(`http://127.0.0.1:8000/api/chat/cross-sell/${sessionId}`)
-            .then(res => setCrossSell(Array.isArray(res?.data?.suggestions) ? res.data.suggestions : []))
+        getCrossSell(sessionId)
+            .then(data => setCrossSell(Array.isArray(data?.suggestions) ? data.suggestions : []))
             .catch(() => { })
 
-        axios.get(`http://127.0.0.1:8000/api/chat/news/${sessionId}`)
-            .then(res => setNews(Array.isArray(res?.data?.news) ? res.data.news : []))
+        getNews(sessionId)
+            .then(data => setNews(Array.isArray(data?.news) ? data.news : []))
             .catch(() => { })
 
-        axios.get(`http://127.0.0.1:8000/api/chat/ai-insight/${sessionId}`)
-            .then(res => { setInsight(res.data.insight); setMissingCount(res.data.missing_count); setInsightLoading(false) })
+        getAIInsight(sessionId)
+            .then(data => { setInsight(data.insight); setMissingCount(data.missing_count); setInsightLoading(false) })
             .catch(() => { setInsight("You're missing key investment opportunities tailored to your goals."); setMissingCount(3); setInsightLoading(false) })
     }, [])
 

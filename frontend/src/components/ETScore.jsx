@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import { getETScore } from "../api/etSaathiApi"
 
 export default function ETScore({ sessionId }) {
   const [data, setData] = useState(null)
@@ -8,9 +8,9 @@ export default function ETScore({ sessionId }) {
 
   useEffect(() => {
     if (!sessionId) return
-    axios.get(`http://127.0.0.1:8000/api/chat/et-score/${sessionId}`)
-      .then(res => {
-        setData(res.data)
+    getETScore(sessionId)
+      .then(data => {
+        setData(data)
         setTimeout(() => setAnimated(true), 300)
       })
       .catch(() => {})

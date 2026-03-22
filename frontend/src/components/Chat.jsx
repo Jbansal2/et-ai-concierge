@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import axios from "axios"
+import { getHealthScore, sendChatMessage } from "../api/etSaathiApi"
 
 const QUICK_REPLIES = {
   user_type: ["Investor", "Student", "Entrepreneur", "Professional"],
@@ -26,8 +26,6 @@ function TypewriterText({ text, onDone, speed = 18 }) {
 
   useEffect(() => {
     i.current = 0
-    setDisplayed("")
-    setDone(false)
     const interval = setInterval(() => {
       if (i.current < text.length) {
         setDisplayed(text.slice(0, i.current + 1))
@@ -39,7 +37,7 @@ function TypewriterText({ text, onDone, speed = 18 }) {
       }
     }, speed)
     return () => clearInterval(interval)
-  }, [text])
+  }, [text, speed, onDone])
 
   return (
     <span className="whitespace-pre-line">
@@ -83,7 +81,7 @@ function MessageBubble({ msg, isLatest, onTypeDone }) {
     }}>
       <div className="text-[16px] leading-relaxed text-gray-900">
         {isLatest ? (
-          <TypewriterText text={msg.text} onDone={onTypeDone} />
+          <TypewriterText key={msg.text} text={msg.text} onDone={onTypeDone} />
         ) : (
           <span className="whitespace-pre-line">{msg.text}</span>
         )}
@@ -129,24 +127,18 @@ export default function Chat({ sessionId, onProfileComplete }) {
     setLoading(true)
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/chat/", {
-        session_id: sessionId,
-        message: text
-      })
-      const data = res.data
+      const data = await sendChatMessage({ sessionId, message: text })
       setMessages(prev => [...prev, { role: "assistant", text: data.reply }])
 
       if (data.stage === "done" && data.profile) {
         setQuickReplies([])
-        const scoreRes = await axios.get(
-          `http://127.0.0.1:8000/api/chat/health-score/${sessionId}`
-        )
+        const scoreData = await getHealthScore(sessionId)
         setTimeout(() => {
           onProfileComplete({
             profile: data.profile,
             recommendations: data.recommendations,
             sessionId,
-            healthScore: scoreRes.data
+            healthScore: scoreData
           })
         }, 1200)
       } else {

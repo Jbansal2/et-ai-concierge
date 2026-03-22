@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import axios from "axios"
+import { askFinance, searchArticles } from "../api/etSaathiApi"
 
 const SUGGESTED = [
   "Should I invest in SIP?",
@@ -22,7 +22,9 @@ function playSound() {
     g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3)
     o.start(ctx.currentTime)
     o.stop(ctx.currentTime + 0.3)
-  } catch {}
+  } catch {
+    // Ignore audio errors (autoplay policies, unsupported APIs)
+  }
 }
 
 export default function AskFinance({ sessionId }) {
@@ -83,16 +85,15 @@ export default function AskFinance({ sessionId }) {
     try {
       // Finance answer + RAG search parallel mein
       const [answerRes, ragRes] = await Promise.all([
-        axios.post(`http://127.0.0.1:8000/api/chat/ask/${sessionId}`, { question }),
-        axios.get(`http://127.0.0.1:8000/api/chat/search/${sessionId}?q=${encodeURIComponent(question)}`)
-          .catch(() => ({ data: { results: [] } }))
+        askFinance(sessionId, question),
+        searchArticles(sessionId, question).catch(() => ({ results: [] }))
       ])
 
-      const articles = (ragRes.data.results || []).slice(0, 2)
+      const articles = (ragRes.results || []).slice(0, 2)
 
       setMessages(prev => [...prev, {
         role: "assistant",
-        text: answerRes.data.answer,
+        text: answerRes.answer,
         articles
       }])
       playSound()

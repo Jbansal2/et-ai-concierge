@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import { getPortfolioGaps } from "../api/etSaathiApi"
 
 export default function PortfolioGaps({ sessionId }) {
   const [data, setData] = useState(null)
@@ -7,9 +7,9 @@ export default function PortfolioGaps({ sessionId }) {
 
   useEffect(() => {
     if (!sessionId) return
-    axios.get(`http://127.0.0.1:8000/api/chat/portfolio-gaps/${sessionId}`)
-      .then(res => {
-        setData(res.data)
+    getPortfolioGaps(sessionId)
+      .then(data => {
+        setData(data)
         setTimeout(() => setAnimated(true), 300)
       })
       .catch(() => {})

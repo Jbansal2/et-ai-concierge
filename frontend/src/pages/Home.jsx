@@ -2,8 +2,8 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import Chat from "../components/Chat"
 import TransitionLoader from "../components/TransitionLoader"
-import axios from "axios"
 import MarketTicker from "../components/MarketTicker"
+import { createSession } from "../api/etSaathiApi"
 
 
 export default function Home() {
@@ -13,14 +13,14 @@ export default function Home() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    axios.post("http://127.0.0.1:8000/api/chat/new")
-      .then(res => {
-        setSessionId(res.data.session_id)
-        if (res.data.returning_user) {
+    createSession()
+      .then(data => {
+        setSessionId(data.session_id)
+        if (data.returning_user) {
           setPendingData({
-            profile: res.data.profile,
-            recommendations: res.data.recommendations,
-            sessionId: res.data.session_id
+            profile: data.profile,
+            recommendations: data.recommendations,
+            sessionId: data.session_id
           })
           setShowLoader(true)
         }

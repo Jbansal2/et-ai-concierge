@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import { getAds } from "../api/etSaathiApi"
 
 const CATEGORY_LABELS = {
   amber: { dot: "bg-amber-400", label: "text-amber-600" },
@@ -23,9 +23,9 @@ export default function AdBanner({ sessionId }) {
 
   useEffect(() => {
     if (!sessionId) return
-    axios.get(`http://127.0.0.1:8000/api/chat/ads/${sessionId}`)
-      .then(res => {
-        setAds(res.data.ads || [])
+    getAds(sessionId)
+      .then(data => {
+        setAds(data.ads || [])
         setTimeout(() => setVisible(true), 600)
       })
       .catch(() => {})
@@ -41,7 +41,7 @@ export default function AdBanner({ sessionId }) {
       transition: "all 0.4s ease",
       fontFamily: "'DM Sans',sans-serif"
     }}>
-      {activeAds.map((ad, i) => {
+      {activeAds.map((ad) => {
         const cfg = CATEGORY_LABELS[ad.bg] || CATEGORY_LABELS.blue
 
         return (

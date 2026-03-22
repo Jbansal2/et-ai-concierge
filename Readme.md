@@ -50,7 +50,7 @@ A 3-minute AI profiling conversation that:
                  │ REST / WebSocket
 ┌────────────────▼────────────────────────┐
 │       Backend + Agent Layer             │
-│         (Node.js / FastAPI)             │
+│                   (FastAPI)             │
 │                                         │
 │  ┌──────────────────────────────────┐   │
 │  │       Orchestrator Agent         │   │
@@ -62,7 +62,7 @@ A 3-minute AI profiling conversation that:
 │  Finance Agent | Cross-sell Agent       │
 │                                         │
 │  ┌──────────────────────────────────┐   │
-│  │    LLM Layer (Groq / Claude)     │   │
+│  │    LLM Layer (Groq)     │   │
 │  └──────────────────────────────────┘   │
 └────────────────┬────────────────────────┘
                  │
@@ -79,10 +79,10 @@ A 3-minute AI profiling conversation that:
 | Layer | Technology |
 |-------|------------|
 | Frontend | React, Tailwind CSS |
-| Backend | Node.js + Express / FastAPI |
-| AI Agents | LangChain / custom agent loop |
-| LLM | Groq API (Llama 3.3) / Claude API |
-| Database | MongoDB / Firebase |
+| Backend | FastAPI |
+| AI Agents | custom agent loop |
+| LLM | Groq API (Llama 3.3) |
+| Database | MongoDB |
 | Session Store | Redis |
 | Vector Search | FAISS / Pinecone |
 | Voice Input | Web Speech API |
@@ -91,11 +91,6 @@ A 3-minute AI profiling conversation that:
 ---
 
 ## Setup Instructions
-
-### Prerequisites
-- Node.js v18+
-- MongoDB (local or Atlas)
-- Groq API key (free at console.groq.com)
 
 ### Installation
 
@@ -156,19 +151,6 @@ PORT=5000
 
 ---
 
-## Impact Model
-
-| Metric | Estimate |
-|--------|----------|
-| ET product discovery rate | 10% → 60%+ per user |
-| Onboarding time saved | ~15 min manual → 3 min AI |
-| Cross-sell conversion lift | Est. 2-3x vs generic homepage |
-| User retention improvement | Personalised users return 40% more (industry benchmark) |
-
-*Assumptions: Based on industry benchmarks for personalised onboarding vs generic experience.*
-
----
-
 ## Demo
 
 [Link to 3-minute pitch video] — *Coming soon*
@@ -181,14 +163,6 @@ PORT=5000
 - [LangChain](https://langchain.com) — Agent orchestration
 - [React](https://react.dev) — Frontend UI
 - [MongoDB Atlas](https://mongodb.com/atlas) — Database
-
----
-
-## Team
-
-| Name | Role |
-|------|------|
-| Jitendra Bansal | Solo developer — Full Stack + AI |
 
 ---
 

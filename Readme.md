@@ -96,17 +96,25 @@ A 3-minute AI profiling conversation that:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/et-ai-concierge.git
+git clone https://github.com/Jbansal2/et-ai-concierge.git
 cd et-ai-concierge
 
 # Backend setup
 cd backend
-npm install
-cp .env.example .env
-# Add your GROQ_API_KEY in .env
+
+# Create & activate a virtualenv (Windows PowerShell)
+python -m venv venv
+./venv/Scripts/Activate.ps1
+
+# Install Python deps
+pip install -r requirements.txt
+
+# Create .env (kept local; git-ignored)
+copy .env.example .env
+# Add your GROQ_API_KEY in backend/.env
 
 # Start backend
-npm run dev
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 
 # Frontend setup (new terminal)
 cd ../frontend
@@ -120,7 +128,7 @@ npm run dev
 GROQ_API_KEY=your_groq_api_key_here
 MONGODB_URI=mongodb://localhost:27017/et-saathi
 REDIS_URL=redis://localhost:6379
-PORT=5000
+PORT=8000
 ```
 
 ---

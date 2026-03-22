@@ -90,49 +90,6 @@ A 3-minute AI profiling conversation that:
 
 ---
 
-## Project Structure
-
-```
-et-ai-concierge/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ChatWidget.jsx
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── ProductCard.jsx
-│   │   │   └── VoiceInput.jsx
-│   │   ├── pages/
-│   │   │   ├── Home.jsx
-│   │   │   └── Onboarding.jsx
-│   │   └── App.jsx
-│   └── package.json
-│
-├── backend/
-│   ├── agents/
-│   │   ├── orchestrator.js
-│   │   ├── profilingAgent.js
-│   │   ├── routingAgent.js
-│   │   ├── contentAgent.js
-│   │   ├── memoryAgent.js
-│   │   ├── financeAgent.js
-│   │   └── crossSellAgent.js
-│   ├── routes/
-│   │   ├── chat.js
-│   │   └── profile.js
-│   ├── data/
-│   │   └── etProducts.json
-│   ├── index.js
-│   └── package.json
-│
-├── docs/
-│   ├── architecture.svg
-│   └── impact-model.md
-│
-└── README.md
-```
-
----
-
 ## Setup Instructions
 
 ### Prerequisites

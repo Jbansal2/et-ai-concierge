@@ -1,6 +1,8 @@
 # ET Saathi 🤝
 ### AI-Powered Personal Concierge for Economic Times
 
+![ET Saathi Screenshot](Screenshot%202025-07-31%20193352.png)
+
 > Built for ET AI Hackathon 2026 | Problem Statement 7 — AI Concierge for ET
 
 ---
